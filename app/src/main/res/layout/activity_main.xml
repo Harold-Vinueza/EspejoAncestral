@@ -57,8 +57,10 @@
         android:layout_height="56dp"
         android:layout_marginTop="18dp"
         android:layout_marginEnd="8dp"
+        android:onClick="abrirGaleria"
         android:text="Galería"
         android:textAllCaps="false"
+        android:textColor="#FFFFFF"
         android:textSize="15sp"
         android:textStyle="bold"
         app:backgroundTint="#1D4ED8"
@@ -67,19 +69,20 @@
         app:iconGravity="textStart"
         app:iconPadding="10dp"
         app:iconTint="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@id/cardHeader"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btCamera"
-        android:textColor="#FFFFFF" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardHeader" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btCamera"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:layout_marginTop="18dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="18dp"
+        android:onClick="abrirCamara"
         android:text="Cámara"
         android:textAllCaps="false"
+        android:textColor="#FFFFFF"
         android:textSize="15sp"
         android:textStyle="bold"
         app:backgroundTint="#0F766E"
@@ -88,10 +91,9 @@
         app:iconGravity="textStart"
         app:iconPadding="10dp"
         app:iconTint="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@id/cardHeader"
-        app:layout_constraintStart_toEndOf="@id/btGallery"
         app:layout_constraintEnd_toEndOf="parent"
-        android:textColor="#FFFFFF" />
+        app:layout_constraintStart_toEndOf="@id/btGallery"
+        app:layout_constraintTop_toBottomOf="@id/cardHeader" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardImage"
@@ -195,6 +197,7 @@
             android:layout_width="0dp"
             android:layout_height="58dp"
             android:layout_weight="1"
+            android:onClick="AnalizarRostro"
             android:text="Analizar rostro"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
