@@ -1,2 +1,7 @@
 #EvidenciaDelActivity_main
-<img width="457" height="986" alt="image" src="https://github.com/user-attachments/assets/e8cc2a84-df4a-4ff0-b4aa-9231df79795f" />
+
+<img width="480" height="779" alt="image" src="https://github.com/user-attachments/assets/28fb9ba0-fe2d-4da7-bb07-620786449728" />
+
+<img width="482" height="989" alt="image" src="https://github.com/user-attachments/assets/c0ffc6ef-d66a-480b-992e-fc0b8fb4a0ae" />
+
+
