@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "155874415514",
+    "firebase_url": "https://faceapp-cfc13-default-rtdb.firebaseio.com",
+    "project_id": "faceapp-cfc13",
+    "storage_bucket": "faceapp-cfc13.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:155874415514:android:d06125f408e558292d2023",
+        "android_client_info": {
+          "package_name": "com.example.espejo_ancestral"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhI7_OQQTVsbh74jRobV1mid16VAqu83A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:155874415514:android:c7b8b3f966c606332d2023",
+        "android_client_info": {
+          "package_name": "com.example.faceapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhI7_OQQTVsbh74jRobV1mid16VAqu83A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
