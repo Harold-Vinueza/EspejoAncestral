@@ -124,20 +124,6 @@
                 android:scaleType="centerCrop"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-            <TextView
-                android:id="@+id/txtPlaceholder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="#99000000"
-                android:paddingLeft="14dp"
-                android:paddingTop="8dp"
-                android:paddingRight="14dp"
-                android:paddingBottom="8dp"
-                android:text="Vista previa"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:textStyle="bold" />
         </FrameLayout>
     </androidx.cardview.widget.CardView>
 

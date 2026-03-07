@@ -21,8 +21,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.espejo_ancestral.motor.MotorRasgos;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.face.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,7 +33,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -102,8 +109,48 @@ public class MainActivity extends AppCompatActivity {
     }
     public void AnalizarRostro(View v) {
 
-        //AQUI SE VA A TRABAR LA LOGICA DE ANALIZAR EL
-        // ROSTRO DESDE LA CLASE MOTOS RASGO Y MOSTRS LOS DATOS DE LA PANTALLA
+        if (mSelectedImage == null) {
+            txtresults.setText("Seleccione una imagen primero");
+            return;
+        }
+
+        InputImage image = InputImage.fromBitmap(mSelectedImage, 0);
+
+        FaceDetectorOptions options =
+                new FaceDetectorOptions.Builder()
+                        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+                        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+                        .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+                        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+                        .enableTracking()
+                        .build();
+
+        FaceDetector detector = FaceDetection.getClient(options);
+
+        detector.process(image)
+                .addOnSuccessListener(faces -> {
+                    if (faces.isEmpty()) {
+                        txtresults.setText("No se detectó rostro");
+                        return;
+                    }
+
+                    MotorRasgos.Resultado r =
+                            MotorRasgos.evaluar(faces.get(0));
+                    guardarPerfilEnFirebase(r);
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(r.perfil).append("\n");
+                    sb.append("Confianza: ")
+                            .append((int)(r.confianza * 100))
+                            .append("%\n\n");
+
+                    for (MotorRasgos.Rasgo rg : r.rasgosUI) {
+                        sb.append("- ").append(rg.nombre).append("\n");
+                    }
+
+                    txtresults.setText(sb.toString());
+                })
+                .addOnFailureListener(e ->
+                        txtresults.setText("Error ML Kit: " + e.getMessage()));
     }
 
     @Override
@@ -146,6 +193,30 @@ public class MainActivity extends AppCompatActivity {
         inputStream.close();
         outputStream.close();
         return tempFile;
+    }
+
+    private void guardarPerfilEnFirebase(MotorRasgos.Resultado r) {
+
+        DatabaseReference db = FirebaseDatabase.getInstance()
+                .getReference("perfiles")
+                .push(); // genera ID único
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("perfil", r.perfil);
+        data.put("confianza", r.confianza);
+        data.put("timestamp", System.currentTimeMillis());
+
+        List<Map<String, Object>> listaRasgos = new ArrayList<>();
+
+        for (MotorRasgos.Rasgo rasgo : r.rasgosUI) {
+            Map<String, Object> obj = new HashMap<>();
+            obj.put("nombre", rasgo);
+            listaRasgos.add(obj);
+        }
+
+        data.put("rasgos", listaRasgos);
+
+        db.setValue(data);
     }
 
 
