@@ -155,18 +155,36 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/txtresults"
+
+
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:minHeight="70dp"
-                android:scrollbars="vertical"
-                android:text="Aquí se mostrarán los resultados obtenidos."
-                android:textColor="#475569"
-                android:textSize="15sp"
-                android:lineSpacingExtra="3dp" />
+                android:layout_height="120dp">
+                <TextView
+                    android:id="@+id/txtresults"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:minHeight="70dp"
+                    android:scrollbars="vertical"
+                    android:text="Aquí se mostrarán los resultados obtenidos."
+                    android:textColor="#475569"
+                    android:textSize="15sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </ScrollView>
+
+
+
+
+
+
+
+
+
         </LinearLayout>
+
+
     </androidx.cardview.widget.CardView>
 
     <LinearLayout
