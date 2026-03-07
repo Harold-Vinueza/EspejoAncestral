@@ -22,6 +22,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.espejo_ancestral.motor.MotorRasgos;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.mlkit.vision.common.InputImage;
@@ -197,27 +198,51 @@ public class MainActivity extends AppCompatActivity {
 
     private void guardarPerfilEnFirebase(MotorRasgos.Resultado r) {
 
-        DatabaseReference db = FirebaseDatabase.getInstance()
-                .getReference("perfiles")
-                .push(); // genera ID único
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference("perfiles");
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("perfil", r.perfil);
-        data.put("confianza", r.confianza);
-        data.put("timestamp", System.currentTimeMillis());
+        ref.get().addOnSuccessListener(snapshot -> {
 
-        List<Map<String, Object>> listaRasgos = new ArrayList<>();
+            if (snapshot.getChildrenCount() >= 20) {
 
-        for (MotorRasgos.Rasgo rasgo : r.rasgosUI) {
-            Map<String, Object> obj = new HashMap<>();
-            obj.put("nombre", rasgo);
-            listaRasgos.add(obj);
-        }
+                // encontrar el más viejo
+                long oldest = Long.MAX_VALUE;
+                String keyOldest = null;
 
-        data.put("rasgos", listaRasgos);
+                for (DataSnapshot child : snapshot.getChildren()) {
 
-        db.setValue(data);
+                    Long ts = child.child("timestamp").getValue(Long.class);
+
+                    if (ts != null && ts < oldest) {
+                        oldest = ts;
+                        keyOldest = child.getKey();
+                    }
+                }
+
+                if (keyOldest != null) {
+                    ref.child(keyOldest).removeValue();
+                }
+            }
+
+            DatabaseReference nuevo = ref.push();
+
+            Map<String,Object> data = new HashMap<>();
+            data.put("perfil", r.perfil);
+            data.put("confianza", r.confianza);
+            data.put("timestamp", System.currentTimeMillis());
+
+            List<Map<String,Object>> rasgos = new ArrayList<>();
+
+            for (MotorRasgos.Rasgo rg : r.rasgosUI) {
+                Map<String,Object> obj = new HashMap<>();
+                obj.put("nombre", rg.nombre);
+                rasgos.add(obj);
+            }
+
+            data.put("rasgos", rasgos);
+
+            nuevo.setValue(data);
+        });
     }
-
 
 }
