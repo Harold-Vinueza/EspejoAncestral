@@ -110,10 +110,17 @@ public class MainActivity extends AppCompatActivity {
     }
     public void AnalizarRostro(View v) {
 
+        txtresults.setVisibility(View.GONE);
         if (mSelectedImage == null) {
             txtresults.setText("Seleccione una imagen primero");
+            txtresults.setVisibility(View.VISIBLE);
             return;
         }
+
+
+
+
+
 
         InputImage image = InputImage.fromBitmap(mSelectedImage, 0);
 
@@ -128,16 +135,40 @@ public class MainActivity extends AppCompatActivity {
 
         FaceDetector detector = FaceDetection.getClient(options);
 
+
+
+
+
         detector.process(image)
                 .addOnSuccessListener(faces -> {
                     if (faces.isEmpty()) {
                         txtresults.setText("No se detectó rostro");
+                        txtresults.setVisibility(View.VISIBLE);
+                        return;
+                    }
+                    if (faces.size() > 1) {
+                        txtresults.setText("Solo debe aparecer una persona en la imagen");
+                        txtresults.setVisibility(View.VISIBLE);
                         return;
                     }
 
+                    Face face = faces.get(0);
+
+                    Float leftEye = face.getLeftEyeOpenProbability();
+                    Float rightEye = face.getRightEyeOpenProbability();
+                    Float smile = face.getSmilingProbability();
+                    if (leftEye == null || rightEye == null || smile == null) {
+                        txtresults.setText("El rostro detectado no parece humano");
+                        txtresults.setVisibility(View.VISIBLE);
+                        return;
+                    }
                     MotorRasgos.Resultado r =
-                            MotorRasgos.evaluar(faces.get(0));
-                    guardarPerfilEnFirebase(r);
+                            MotorRasgos.evaluar(face);
+
+
+                    String imagenBase64 = bitmapABase64(mSelectedImage);
+                    guardarPerfilEnFirebase(r, imagenBase64);
+
                     StringBuilder sb = new StringBuilder();
                     sb.append(r.perfil).append("\n");
                     sb.append("Confianza: ")
@@ -147,11 +178,19 @@ public class MainActivity extends AppCompatActivity {
                     for (MotorRasgos.Rasgo rg : r.rasgosUI) {
                         sb.append("- ").append(rg.nombre).append("\n");
                     }
+//                    sb.append("\nDEBUG:\n");
+//                    sb.append(r.metricas.toString());
 
-                    txtresults.setText(sb.toString());
+                    Intent intent = new Intent(MainActivity.this, ResultadoActivity.class);
+                    intent.putExtra("resultado", sb.toString());
+                    startActivity(intent);
                 })
-                .addOnFailureListener(e ->
-                        txtresults.setText("Error ML Kit: " + e.getMessage()));
+                .addOnFailureListener(e -> {
+                    txtresults.setText("Error ML Kit: " + e.getMessage());
+                    txtresults.setVisibility(View.VISIBLE);
+                });
+
+
     }
 
     @Override
@@ -196,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         return tempFile;
     }
 
-    private void guardarPerfilEnFirebase(MotorRasgos.Resultado r) {
+    private void guardarPerfilEnFirebase(MotorRasgos.Resultado r, String imagenBase64) {
 
         DatabaseReference ref = FirebaseDatabase.getInstance()
                 .getReference("perfiles");
@@ -208,7 +247,6 @@ public class MainActivity extends AppCompatActivity {
                 // encontrar el más viejo
                 long oldest = Long.MAX_VALUE;
                 String keyOldest = null;
-
                 for (DataSnapshot child : snapshot.getChildren()) {
 
                     Long ts = child.child("timestamp").getValue(Long.class);
@@ -217,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
                         oldest = ts;
                         keyOldest = child.getKey();
                     }
+
                 }
 
                 if (keyOldest != null) {
@@ -233,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
 
             List<Map<String,Object>> rasgos = new ArrayList<>();
 
+
             for (MotorRasgos.Rasgo rg : r.rasgosUI) {
                 Map<String,Object> obj = new HashMap<>();
                 obj.put("nombre", rg.nombre);
@@ -240,9 +280,20 @@ public class MainActivity extends AppCompatActivity {
             }
 
             data.put("rasgos", rasgos);
-
+            data.put("imagen", imagenBase64);
             nuevo.setValue(data);
         });
     }
+    private String bitmapABase64(Bitmap bitmap) {
+        if (bitmap == null) return "";
 
+        java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+
+        // Puedes cambiar 70 por 60 o 50 si quieres que pese menos
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+
+        byte[] imagenBytes = baos.toByteArray();
+
+        return android.util.Base64.encodeToString(imagenBytes, android.util.Base64.DEFAULT);
+    }
 }
