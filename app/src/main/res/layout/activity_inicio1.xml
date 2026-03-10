@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EEF1F8"
+    tools:context=".InicioActivity1">
+
+    <TextView
+        android:id="@+id/lblSuperior"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:letterSpacing="0.22"
+        android:text="■  UTEQ · INGENIERÍA DE SOFTWARE  ■"
+        android:textColor="#C5A028"
+        android:textSize="8.5sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/headerBand"
+        android:layout_width="60dp"
+        android:layout_height="3dp"
+        android:layout_marginTop="6dp"
+        android:background="#C5A028"
+        app:layout_constraintEnd_toEndOf="@+id/lblSuperior"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="@+id/lblSuperior"
+        app:layout_constraintTop_toBottomOf="@id/lblSuperior" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="147dp"
+        android:layout_height="129dp"
+        android:layout_marginTop="152dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="@+id/lblSuperior"
+        app:layout_constraintStart_toStartOf="@+id/lblSuperior"
+        app:layout_constraintTop_toBottomOf="@+id/headerBand"
+        app:srcCompat="@drawable/logogrupo" />
+
+    <Button
+        android:id="@+id/Entrar"
+        android:layout_width="220dp"
+
+        android:layout_height="54dp"
+        android:layout_marginTop="4dp"
+        android:onClick="abrirApp"
+        android:text="INICIAR"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        app:backgroundTint="#283593"
+        app:cornerRadius="8dp"
+        app:elevation="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtApp" />
+
+    <TextView
+        android:id="@+id/txtApp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Espejo Ancestral"
+        android:textColor="#1A237E"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="63dp"
+        android:layout_height="66dp"
+        android:layout_marginTop="124dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="@+id/Entrar"
+        app:layout_constraintHorizontal_bias="0.426"
+        app:layout_constraintStart_toStartOf="@+id/Entrar"
+        app:layout_constraintTop_toBottomOf="@+id/Entrar"
+        app:srcCompat="@drawable/logo" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="ForáCode"
+        android:textColor="#455A64"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView2"
+        app:layout_constraintHorizontal_bias="0.466"
+        app:layout_constraintStart_toStartOf="@+id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="DATOS · INNOVACIÓN · CONEXIÓN"
+        android:textColor="#455A64"
+        android:textSize="8sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/textView3"
+        app:layout_constraintHorizontal_bias="0.48"
+        app:layout_constraintStart_toStartOf="@+id/textView3"
+        app:layout_constraintTop_toTopOf="@+id/textView3"
+        app:layout_constraintVertical_bias="0.0" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
