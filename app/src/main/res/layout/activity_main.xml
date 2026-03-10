@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EEF2F7"
-    android:padding="18dp"
+    android:background="#F0F4F8"
     tools:context=".MainActivity">
 
+    <!-- Header Card -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="22dp"
-        app:cardElevation="8dp"
-        app:cardUseCompatPadding="true"
+        android:layout_margin="16dp"
+        app:cardBackgroundColor="#1A237E"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -25,190 +26,136 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#FFFFFF"
             android:padding="20dp">
 
             <TextView
                 android:id="@+id/txtTitulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Espejo ancestral"
-                android:textColor="#0F172A"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.03" />
+                android:text="Google ML Kit"
+                android:textAlignment="center"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                android:textStyle="bold"/>
 
             <TextView
-                android:id="@+id/txtSubtitulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:gravity="center"
-                android:text="Análisis visual con identidad cultural"
-                android:textColor="#64748B"
-                android:textSize="14sp" />
+                android:text="Análisis de imágenes con IA"
+                android:textAlignment="center"
+                android:textColor="#90CAF9"
+                android:textSize="12sp"/>
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btGallery"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="8dp"
-        android:onClick="abrirGaleria"
-        android:text="Galería"
-        android:textAllCaps="false"
-        android:textColor="#FFFFFF"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:backgroundTint="#1D4ED8"
-        app:cornerRadius="14dp"
-        app:icon="@drawable/galeria"
-        app:iconGravity="textStart"
-        app:iconPadding="10dp"
-        app:iconTint="#FFFFFF"
-        app:layout_constraintEnd_toStartOf="@id/btCamera"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardHeader" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btCamera"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="18dp"
-        android:onClick="abrirCamara"
-        android:text="Cámara"
-        android:textAllCaps="false"
-        android:textColor="#FFFFFF"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:backgroundTint="#0F766E"
-        app:cornerRadius="14dp"
-        app:icon="@drawable/camara"
-        app:iconGravity="textStart"
-        app:iconPadding="10dp"
-        app:iconTint="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/btGallery"
-        app:layout_constraintTop_toBottomOf="@id/cardHeader" />
-
+    <!-- Image Preview Card -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginBottom="14dp"
-        app:cardCornerRadius="22dp"
-        app:cardElevation="8dp"
-        app:cardUseCompatPadding="true"
-        app:layout_constraintTop_toBottomOf="@id/btGallery"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="14dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toBottomOf="@id/cardHeader"
         app:layout_constraintBottom_toTopOf="@id/cardResults"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <FrameLayout
+        <ImageView
+            android:id="@+id/image_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#FFFFFF">
+            android:contentDescription="Imagen seleccionada"
+            android:scaleType="centerCrop"/>
 
-            <ImageView
-                android:id="@+id/image_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:background="#E2E8F0"
-                android:contentDescription="Imagen seleccionada"
-                android:scaleType="centerCrop"
-                tools:srcCompat="@tools:sample/backgrounds/scenic" />
-
-            <TextView
-                android:id="@+id/txtPlaceholder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="#99000000"
-                android:paddingLeft="14dp"
-                android:paddingTop="8dp"
-                android:paddingRight="14dp"
-                android:paddingBottom="8dp"
-                android:text="Vista previa"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </FrameLayout>
     </androidx.cardview.widget.CardView>
 
+
+    <!-- Results Card -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardResults"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
-        app:cardCornerRadius="18dp"
-        app:cardElevation="6dp"
-        app:cardUseCompatPadding="true"
+        android:layout_margin="16dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
         app:layout_constraintBottom_toTopOf="@id/layoutBottomButtons"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/txtresults"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#FFFFFF"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:text="Seleccione una imagen primero"
+            android:textAlignment="center"
+            android:textColor="#37474F"
+            android:textSize="14sp"
+            android:visibility="gone"/>
 
-            <TextView
-                android:id="@+id/txtLabelResultados"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Resultados del análisis"
-                android:textColor="#0F172A"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/txtresults"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:minHeight="70dp"
-                android:scrollbars="vertical"
-                android:text="Aquí se mostrarán los resultados obtenidos."
-                android:textColor="#475569"
-                android:textSize="15sp"
-                android:lineSpacingExtra="3dp" />
-        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+
+    <!-- Botones Cámara y Galería -->
     <LinearLayout
         android:id="@+id/layoutBottomButtons"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/btFace"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btFace"
+            android:id="@+id/btCamera"
             android:layout_width="0dp"
-            android:layout_height="58dp"
+            android:layout_height="52dp"
             android:layout_weight="1"
-            android:onClick="AnalizarRostro"
-            android:text="Analizar rostro"
-            android:textAllCaps="false"
+            android:onClick="abrirCamara"
+            android:text="Cámara"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:backgroundTint="#7C3AED"
-            app:cornerRadius="16dp"
-            app:icon="@drawable/persona"
-            app:iconGravity="textStart"
-            app:iconPadding="10dp"
-            app:iconTint="#FFFFFF" />
+            app:backgroundTint="#1A237E"
+            app:icon="@drawable/camera"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btGallery"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:onClick="abrirGaleria"
+            android:text="Galería"
+            android:textColor="#1A237E"
+            app:backgroundTint="#FFFFFF"
+            app:strokeColor="#C5CAE9"
+            app:strokeWidth="1dp"
+            app:icon="@drawable/galeria"/>
+
     </LinearLayout>
+
+
+    <!-- Botón Analizar -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btFace"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_margin="16dp"
+        android:onClick="AnalizarRostro"
+        android:text="Analizar Rostro"
+        android:textColor="#FFFFFF"
+        app:backgroundTint="#283593"
+        app:cornerRadius="14dp"
+        app:icon="@drawable/persona"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

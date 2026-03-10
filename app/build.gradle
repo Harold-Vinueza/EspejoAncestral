@@ -34,6 +34,11 @@ android {
 }
 
 dependencies {
+
+    //librería de ML Kit Face Detection
+    implementation libs.face.detection
+
+
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
