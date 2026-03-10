@@ -363,78 +363,247 @@ public class MotorRasgos {
         // -------------------------
         // 8) PUNTAJES DE 4 PERFILES
         // -------------------------
-        float p1 = 0f;
-        float p2 = 0f;
-        float p3 = 0f;
-        float p4 = 0f;
-        float p5 = 0f;
-        float p6 = 0f;
-        float p7 = 0f;
-        float p8 = 0f;
+        float p1 = 0f, w1 = 0f;
+        float p2 = 0f, w2 = 0f;
+        float p3 = 0f, w3 = 0f;
+        float p4 = 0f, w4 = 0f;
+        float p5 = 0f, w5 = 0f;
+        float p6 = 0f, w6 = 0f;
+        float p7 = 0f, w7 = 0f;
+        float p8 = 0f, w8 = 0f;
+        float p9 = 0f, w9 = 0f;
+        float p10 = 0f, w10 = 0f;
+        float p11 = 0f, w11 = 0f;
+        float p12 = 0f, w12 = 0f;
+        float p13 = 0f, w13 = 0f;
+        float p14 = 0f, w14 = 0f;
+        float p15 = 0f, w15 = 0f;
+        float p16 = 0f, w16 = 0f;
+        float p17 = 0f, w17 = 0f;
+        float p18 = 0f, w18 = 0f;
+        float p19 = 0f, w19 = 0f;
+        float p20 = 0f, w20 = 0f;
+        float p21 = 0f, w21 = 0f;
+        float p22 = 0f, w22 = 0f;
+        float p23 = 0f, w23 = 0f;
+        float p24 = 0f, w24 = 0f;
 
-        // PERFIL 1: rostro más alargado, nariz media/estrecha, boca media, simetría alta
-        p1 += scoreHigh(faceRatio, 1.20f, 1.55f) * 2.0f;
-        p1 += scoreLow(noseWidth, 0.11f, 0.17f) * 1.5f;
-        p1 += scoreMid(mouthWidth, 0.24f, 0.31f, 0.36f) * 1.0f;
-        p1 += scoreHigh(symmetry, 0.55f, 0.90f) * 1.3f;
-        p1 += scoreMid(avgEyeOpen, 0.016f, 0.022f, 0.030f) * 0.8f;
+        // PERFIL 1
+        p1 += scoreHigh(faceRatio, 1.20f, 1.55f) * 1.2f; w1 += 1.2f;
+        p1 += scoreLow(noseWidth, 0.11f, 0.17f) * 1.1f; w1 += 1.1f;
+        p1 += scoreMid(mouthWidth, 0.24f, 0.31f, 0.36f) * 1.0f; w1 += 1.0f;
+        p1 += scoreHigh(symmetry, 0.55f, 0.90f) * 1.0f; w1 += 1.0f;
+        p1 += scoreMid(avgEyeOpen, 0.016f, 0.022f, 0.030f) * 0.9f; w1 += 0.9f;
 
-        // PERFIL 2: rostro ancho/equilibrado, mejillas más visibles, base nasal media, sonrisa media/alta
-        p2 += scoreLow(faceRatio, 1.05f, 1.28f) * 1.6f;
-        p2 += scoreHigh(cheekWidth, 0.42f, 0.60f) * 1.8f;
-        p2 += scoreMid(noseWidth, 0.12f, 0.16f, 0.21f) * 1.2f;
-        p2 += scoreHigh(sonrisa, 0.25f, 0.90f) * 1.0f;
-        p2 += scoreMid(mouthWidth, 0.26f, 0.31f, 0.37f) * 0.8f;
+// PERFIL 2
+        p2 += scoreLow(faceRatio, 1.08f, 1.22f) * 1.0f; w2 += 1.0f;
+        p2 += scoreHigh(cheekWidth, 0.46f, 0.58f) * 1.0f; w2 += 1.0f;
+        p2 += scoreMid(noseWidth, 0.13f, 0.16f, 0.19f) * 0.9f; w2 += 0.9f;
+        p2 += scoreHigh(sonrisa, 0.35f, 0.80f) * 0.8f; w2 += 0.8f;
+        p2 += scoreMid(mouthWidth, 0.27f, 0.31f, 0.35f) * 0.8f; w2 += 0.8f;
 
-        // PERFIL 3: ojos más separados, boca más ancha, labios más notorios, rostro equilibrado
-        p3 += scoreHigh(eyeDistance, 0.26f, 0.36f) * 1.8f;
-        p3 += scoreHigh(mouthWidth, 0.25f, 0.38f) * 1.6f;
-        p3 += scoreHigh(avgLip, 0.016f, 0.036f) * 1.3f;
-        p3 += scoreMid(faceRatio, 1.10f, 1.24f, 1.40f) * 1.0f;
-        p3 += scoreMid(avgEyeOpen, 0.018f, 0.026f, 0.034f) * 0.8f;
+// PERFIL 3
+        p3 += scoreHigh(eyeDistance, 0.26f, 0.36f) * 1.1f; w3 += 1.1f;
+        p3 += scoreHigh(mouthWidth, 0.25f, 0.38f) * 1.1f; w3 += 1.1f;
+        p3 += scoreHigh(avgLip, 0.016f, 0.036f) * 1.0f; w3 += 1.0f;
+        p3 += scoreMid(faceRatio, 1.10f, 1.24f, 1.40f) * 0.9f; w3 += 0.9f;
+        p3 += scoreMid(avgEyeOpen, 0.018f, 0.026f, 0.034f) * 0.9f; w3 += 0.9f;
 
-        // PERFIL 4: mandíbula/rostro visualmente más fuerte por ancho, nariz más ancha, menor sonrisa, ángulos más marcados
-        p4 += scoreLow(faceRatio, 1.00f, 1.22f) * 1.7f;
-        p4 += scoreHigh(noseWidth, 0.13f, 0.24f) * 1.5f;
-        p4 += scoreLow(sonrisa, 0.05f, 0.55f) * 1.0f;
-        p4 += scoreHigh(Math.abs(rotZ), 0f, 18f) * 0.5f;
-        p4 += scoreHigh(earDistance, 0.70f, 1.10f) * 0.8f;
+// PERFIL 4
+        p4 += scoreLow(faceRatio, 1.00f, 1.22f) * 1.0f; w4 += 1.0f;
+        p4 += scoreHigh(noseWidth, 0.13f, 0.24f) * 1.0f; w4 += 1.0f;
+        p4 += scoreLow(sonrisa, 0.05f, 0.55f) * 0.9f; w4 += 0.9f;
+        p4 += scoreHigh(Math.abs(rotZ), 0f, 18f) * 0.7f; w4 += 0.7f;
+        p4 += scoreHigh(earDistance, 0.70f, 1.10f) * 0.7f; w4 += 0.7f;
 
-        // PERFIL 5: rostro alargado + ojos separados
-        p5 += scoreHigh(faceRatio, 1.25f, 1.60f) * 1.7f;
-        p5 += scoreHigh(eyeDistance, 0.27f, 0.40f) * 1.5f;
-        p5 += scoreMid(mouthWidth, 0.25f, 0.32f, 0.38f) * 1.0f;
+// PERFIL 5
+        p5 += scoreHigh(faceRatio, 1.25f, 1.60f) * 1.1f; w5 += 1.1f;
+        p5 += scoreHigh(eyeDistance, 0.27f, 0.40f) * 1.1f; w5 += 1.1f;
+        p5 += scoreMid(mouthWidth, 0.25f, 0.32f, 0.38f) * 1.0f; w5 += 1.0f;
+        p5 += scoreHigh(symmetry, 0.55f, 0.90f) * 0.9f; w5 += 0.9f;
+        p5 += scoreMid(avgEyeOpen, 0.018f, 0.026f, 0.034f) * 0.8f; w5 += 0.8f;
 
-// PERFIL 6: rostro equilibrado + nariz media
-        p6 += scoreMid(faceRatio, 1.10f, 1.25f, 1.40f) * 1.6f;
-        p6 += scoreMid(noseWidth, 0.12f, 0.17f, 0.22f) * 1.4f;
-        p6 += scoreHigh(symmetry, 0.60f, 0.95f) * 1.0f;
+// PERFIL 6
+        p6 += scoreMid(faceRatio, 1.10f, 1.25f, 1.40f) * 1.1f; w6 += 1.1f;
+        p6 += scoreMid(noseWidth, 0.12f, 0.17f, 0.22f) * 1.1f; w6 += 1.1f;
+        p6 += scoreHigh(symmetry, 0.60f, 0.95f) * 1.0f; w6 += 1.0f;
+        p6 += scoreMid(mouthWidth, 0.24f, 0.30f, 0.36f) * 0.9f; w6 += 0.9f;
+        p6 += scoreMid(eyeDistance, 0.25f, 0.30f, 0.36f) * 0.8f; w6 += 0.8f;
 
-// PERFIL 7: boca ancha + sonrisa alta
-        p7 += scoreHigh(mouthWidth, 0.28f, 0.40f) * 1.8f;
-        p7 += scoreHigh(sonrisa, 0.30f, 0.90f) * 1.2f;
-        p7 += scoreMid(avgLip, 0.015f, 0.025f, 0.035f) * 1.0f;
+// PERFIL 7
+        p7 += scoreHigh(mouthWidth, 0.28f, 0.40f) * 1.1f; w7 += 1.1f;
+        p7 += scoreHigh(sonrisa, 0.30f, 0.90f) * 1.0f; w7 += 1.0f;
+        p7 += scoreMid(avgLip, 0.015f, 0.025f, 0.035f) * 1.0f; w7 += 1.0f;
+        p7 += scoreHigh(avgEyeOpen, 0.02f, 0.05f) * 0.8f; w7 += 0.8f;
+        p7 += scoreMid(faceRatio, 1.10f, 1.28f, 1.40f) * 0.8f; w7 += 0.8f;
 
-// PERFIL 8: rostro ancho + nariz ancha
-        p8 += scoreLow(faceRatio, 1.00f, 1.20f) * 1.6f;
-        p8 += scoreHigh(noseWidth, 0.14f, 0.28f) * 1.5f;
-        p8 += scoreHigh(cheekWidth, 0.40f, 0.65f) * 1.2f;
+// PERFIL 8
+        p8 += scoreLow(faceRatio, 1.00f, 1.20f) * 1.0f; w8 += 1.0f;
+        p8 += scoreHigh(noseWidth, 0.14f, 0.28f) * 1.0f; w8 += 1.0f;
+        p8 += scoreHigh(cheekWidth, 0.40f, 0.65f) * 1.0f; w8 += 1.0f;
+        p8 += scoreLow(sonrisa, 0.05f, 0.55f) * 0.8f; w8 += 0.8f;
+        p8 += scoreHigh(symmetry, 0.55f, 0.90f) * 0.8f; w8 += 0.8f;
 
+// PERFIL 9
+        p9 += scoreLow(eyeDistance, 0.20f, 0.28f) * 1.1f; w9 += 1.1f;
+        p9 += scoreHigh(faceRatio, 1.25f, 1.60f) * 1.0f; w9 += 1.0f;
+        p9 += scoreHigh(symmetry, 0.55f, 0.90f) * 1.0f; w9 += 1.0f;
+        p9 += scoreLow(noseWidth, 0.10f, 0.18f) * 0.9f; w9 += 0.9f;
+        p9 += scoreMid(mouthWidth, 0.24f, 0.30f, 0.36f) * 0.8f; w9 += 0.8f;
+
+// PERFIL 10
+        p10 += scoreMid(mouthWidth, 0.24f, 0.30f, 0.36f) * 1.1f; w10 += 1.1f;
+        p10 += scoreMid(noseWidth, 0.12f, 0.18f, 0.24f) * 1.0f; w10 += 1.0f;
+        p10 += scoreMid(faceRatio, 1.10f, 1.25f, 1.40f) * 1.0f; w10 += 1.0f;
+        p10 += scoreMid(eyeDistance, 0.25f, 0.30f, 0.36f) * 0.9f; w10 += 0.9f;
+        p10 += scoreHigh(symmetry, 0.60f, 0.95f) * 0.8f; w10 += 0.8f;
+
+// PERFIL 11
+        p11 += scoreLow(faceRatio, 1.00f, 1.20f) * 1.0f; w11 += 1.0f;
+        p11 += scoreHigh(avgEyeOpen, 0.02f, 0.04f) * 1.1f; w11 += 1.1f;
+        p11 += scoreHigh(cheekWidth, 0.40f, 0.60f) * 1.0f; w11 += 1.0f;
+        p11 += scoreMid(noseWidth, 0.12f, 0.18f, 0.24f) * 0.8f; w11 += 0.8f;
+        p11 += scoreHigh(symmetry, 0.55f, 0.90f) * 0.8f; w11 += 0.8f;
+
+// PERFIL 12
+        p12 += scoreHigh(sonrisa, 0.40f, 0.90f) * 1.1f; w12 += 1.1f;
+        p12 += scoreHigh(avgLip, 0.02f, 0.04f) * 1.0f; w12 += 1.0f;
+        p12 += scoreMid(mouthWidth, 0.26f, 0.32f, 0.38f) * 1.0f; w12 += 1.0f;
+        p12 += scoreHigh(avgEyeOpen, 0.02f, 0.05f) * 0.8f; w12 += 0.8f;
+        p12 += scoreMid(faceRatio, 1.10f, 1.28f, 1.40f) * 0.8f; w12 += 0.8f;
+
+// PERFIL 13
+        p13 += scoreLow(noseWidth, 0.10f, 0.18f) * 1.1f; w13 += 1.1f;
+        p13 += scoreHigh(faceRatio, 1.30f, 1.65f) * 1.0f; w13 += 1.0f;
+        p13 += scoreHigh(symmetry, 0.60f, 0.95f) * 1.0f; w13 += 1.0f;
+        p13 += scoreLow(eyeDistance, 0.20f, 0.28f) * 0.8f; w13 += 0.8f;
+        p13 += scoreMid(mouthWidth, 0.24f, 0.30f, 0.36f) * 0.8f; w13 += 0.8f;
+
+// PERFIL 14
+        p14 += scoreMid(faceRatio, 1.10f, 1.25f, 1.40f) * 1.1f; w14 += 1.1f;
+        p14 += scoreMid(eyeDistance, 0.25f, 0.30f, 0.36f) * 1.0f; w14 += 1.0f;
+        p14 += scoreMid(avgEyeOpen, 0.018f, 0.026f, 0.034f) * 1.0f; w14 += 1.0f;
+        p14 += scoreMid(noseWidth, 0.12f, 0.18f, 0.24f) * 0.8f; w14 += 0.8f;
+        p14 += scoreHigh(symmetry, 0.60f, 0.95f) * 0.8f; w14 += 0.8f;
+
+// PERFIL 15
+        p15 += scoreHigh(mouthWidth, 0.30f, 0.42f) * 1.1f; w15 += 1.1f;
+        p15 += scoreHigh(avgLip, 0.02f, 0.04f) * 1.0f; w15 += 1.0f;
+        p15 += scoreMid(symmetry, 0.50f, 0.70f, 0.90f) * 0.9f; w15 += 0.9f;
+        p15 += scoreHigh(sonrisa, 0.25f, 0.85f) * 0.8f; w15 += 0.8f;
+        p15 += scoreMid(faceRatio, 1.10f, 1.28f, 1.40f) * 0.8f; w15 += 0.8f;
+
+// PERFIL 16
+        p16 += scoreLow(faceRatio, 1.00f, 1.22f) * 1.0f; w16 += 1.0f;
+        p16 += scoreMid(noseWidth, 0.12f, 0.18f, 0.25f) * 1.0f; w16 += 1.0f;
+        p16 += scoreHigh(cheekWidth, 0.40f, 0.60f) * 1.0f; w16 += 1.0f;
+        p16 += scoreLow(sonrisa, 0.05f, 0.55f) * 0.8f; w16 += 0.8f;
+        p16 += scoreHigh(symmetry, 0.55f, 0.90f) * 0.8f; w16 += 0.8f;
+
+// PERFIL 17
+        p17 += scoreHigh(avgEyeOpen, 0.02f, 0.05f) * 1.1f; w17 += 1.1f;
+        p17 += scoreMid(sonrisa, 0.20f, 0.50f, 0.80f) * 1.0f; w17 += 1.0f;
+        p17 += scoreMid(faceRatio, 1.10f, 1.30f, 1.45f) * 1.0f; w17 += 1.0f;
+        p17 += scoreMid(eyeDistance, 0.25f, 0.30f, 0.36f) * 0.8f; w17 += 0.8f;
+        p17 += scoreHigh(symmetry, 0.60f, 0.95f) * 0.8f; w17 += 0.8f;
+
+// PERFIL 18
+        p18 += scoreHigh(noseWidth, 0.16f, 0.30f) * 1.0f; w18 += 1.0f;
+        p18 += scoreHigh(cheekWidth, 0.45f, 0.65f) * 1.0f; w18 += 1.0f;
+        p18 += scoreLow(faceRatio, 1.00f, 1.25f) * 1.0f; w18 += 1.0f;
+        p18 += scoreLow(sonrisa, 0.05f, 0.55f) * 0.8f; w18 += 0.8f;
+        p18 += scoreHigh(symmetry, 0.55f, 0.90f) * 0.8f; w18 += 0.8f;
+
+// PERFIL 19
+        p19 += scoreHigh(faceRatio, 1.30f, 1.60f) * 1.1f; w19 += 1.1f;
+        p19 += scoreMid(mouthWidth, 0.24f, 0.30f, 0.36f) * 1.0f; w19 += 1.0f;
+        p19 += scoreHigh(symmetry, 0.60f, 0.90f) * 1.0f; w19 += 1.0f;
+        p19 += scoreLow(noseWidth, 0.10f, 0.18f) * 0.8f; w19 += 0.8f;
+        p19 += scoreMid(avgEyeOpen, 0.018f, 0.026f, 0.034f) * 0.8f; w19 += 0.8f;
+
+// PERFIL 20
+        p20 += scoreLow(avgLip, 0.01f, 0.02f) * 1.0f; w20 += 1.0f;
+        p20 += scoreMid(faceRatio, 1.10f, 1.25f, 1.40f) * 1.0f; w20 += 1.0f;
+        p20 += scoreMid(mouthWidth, 0.24f, 0.30f, 0.36f) * 1.0f; w20 += 1.0f;
+        p20 += scoreMid(noseWidth, 0.12f, 0.18f, 0.24f) * 0.8f; w20 += 0.8f;
+        p20 += scoreHigh(symmetry, 0.60f, 0.95f) * 0.8f; w20 += 0.8f;
+
+// PERFIL 21
+        p21 += scoreHigh(eyeDistance, 0.27f, 0.40f) * 1.1f; w21 += 1.1f;
+        p21 += scoreHigh(sonrisa, 0.40f, 0.90f) * 1.0f; w21 += 1.0f;
+        p21 += scoreMid(faceRatio, 1.10f, 1.30f, 1.45f) * 1.0f; w21 += 1.0f;
+        p21 += scoreHigh(avgEyeOpen, 0.02f, 0.05f) * 0.8f; w21 += 0.8f;
+        p21 += scoreHigh(symmetry, 0.55f, 0.90f) * 0.8f; w21 += 0.8f;
+
+// PERFIL 22
+        p22 += scoreLow(faceRatio, 1.00f, 1.22f) * 1.0f; w22 += 1.0f;
+        p22 += scoreHigh(avgLip, 0.02f, 0.04f) * 1.0f; w22 += 1.0f;
+        p22 += scoreHigh(cheekWidth, 0.40f, 0.60f) * 1.0f; w22 += 1.0f;
+        p22 += scoreHigh(sonrisa, 0.25f, 0.85f) * 0.8f; w22 += 0.8f;
+        p22 += scoreMid(mouthWidth, 0.26f, 0.32f, 0.38f) * 0.8f; w22 += 0.8f;
+
+// PERFIL 23
+        p23 += scoreMid(noseWidth, 0.12f, 0.18f, 0.24f) * 1.1f; w23 += 1.1f;
+        p23 += scoreMid(eyeDistance, 0.25f, 0.30f, 0.36f) * 1.0f; w23 += 1.0f;
+        p23 += scoreHigh(symmetry, 0.60f, 0.95f) * 1.0f; w23 += 1.0f;
+        p23 += scoreMid(faceRatio, 1.10f, 1.25f, 1.40f) * 0.8f; w23 += 0.8f;
+        p23 += scoreMid(avgEyeOpen, 0.018f, 0.026f, 0.034f) * 0.8f; w23 += 0.8f;
+
+// PERFIL 24
+        p24 += scoreMid(faceRatio, 1.10f, 1.30f, 1.45f) * 1.0f; w24 += 1.0f;
+        p24 += scoreMid(sonrisa, 0.20f, 0.50f, 0.80f) * 1.0f; w24 += 1.0f;
+        p24 += scoreMid(mouthWidth, 0.25f, 0.32f, 0.38f) * 1.0f; w24 += 1.0f;
+        p24 += scoreMid(noseWidth, 0.12f, 0.18f, 0.24f) * 0.8f; w24 += 0.8f;
+        p24 += scoreHigh(symmetry, 0.55f, 0.90f) * 0.8f; w24 += 0.8f;
+
+        // NORMALIZAR TODOS
+        p1 /= w1;   p2 /= w2;   p3 /= w3;   p4 /= w4;
+        p5 /= w5;   p6 /= w6;   p7 /= w7;   p8 /= w8;
+        p9 /= w9;   p10 /= w10; p11 /= w11; p12 /= w12;
+        p13 /= w13; p14 /= w14; p15 /= w15; p16 /= w16;
+        p17 /= w17; p18 /= w18; p19 /= w19; p20 /= w20;
+        p21 /= w21; p22 /= w22; p23 /= w23; p24 /= w24;
         // empate / robustez con simetría y puntos
         float detalle = normalize(totalContourPoints, 40f, 130f);
-        p1 += detalle * 0.3f;
-        p2 += detalle * 0.3f;
-        p3 += detalle * 0.3f;
-        p4 += detalle * 0.3f;
-        p5 += detalle * 0.3f;
-        p6 += detalle * 0.3f;
-        p7 += detalle * 0.3f;
-        p8 += detalle * 0.3f;
+        p1 += detalle * 0.05f;
+        p2 += detalle * 0.05f;
+        p3 += detalle * 0.05f;
+        p4 += detalle * 0.05f;
+        p5 += detalle * 0.05f;
+        p6 += detalle * 0.05f;
+        p7 += detalle * 0.05f;
+        p8 += detalle * 0.05f;
+        p9 += detalle * 0.05f;
+        p10 += detalle * 0.05f;
+        p11 += detalle * 0.05f;
+        p12 += detalle * 0.05f;
+        p13 += detalle * 0.05f;
+        p14 += detalle * 0.05f;
+        p15 += detalle * 0.05f;
+        p16 += detalle * 0.05f;
+        p17 += detalle * 0.05f;
+        p18 += detalle * 0.05f;
+        p19 += detalle * 0.05f;
+        p20 += detalle * 0.05f;
+        p21 += detalle * 0.05f;
+        p22 += detalle * 0.05f;
+        p23 += detalle * 0.05f;
+        p24 += detalle * 0.05f;
+
 
         // -------------------------
         // 9) DECISIÓN FINAL
         // -------------------------
-        float[] scores = new float[]{p1, p2, p3, p4, p5, p6, p7, p8};
+        float[] scores = {
+                p1,p2,p3,p4,
+                p5,p6,p7,p8,
+                p9,p10,p11,p12,p13,p14,
+                p15,p16,p17,p18,p19,p20,p21,p22,p23,p24
+        };
+
+        for(int i = 0; i < scores.length; i++){
+            scores[i] += Math.random() * 0.6;
+        }
 
         String[] nombres = {
                 "Awá",
@@ -444,8 +613,25 @@ public class MotorRasgos {
                 "Otavalo",
                 "Cayambi",
                 "Kitu Kara",
-                "Panzaleo"
+                "Panzaleo",
+                "Chibuleo",
+                "Salasaka",
+                "Waranka",
+                "Puruhá",
+                "Kañari",
+                "Saraguro",
+                "Achuar",
+                "Andoa",
+                "Cofán",
+                "Siona",
+                "Secoya",
+                "Shuar",
+                "Shiwiar",
+                "Waorani",
+                "Zápara",
+                "Kichwa Amazónico"
         };
+
 
         int idxMax = 0;
         float max = scores[0];
@@ -463,7 +649,7 @@ public class MotorRasgos {
         if (suma <= 0.0001f) {
             confianza = 0.25f;
         } else {
-            confianza = max / suma;
+            confianza = (max - (suma / scores.length)) / max;
         }
 
         // Guardar puntajes también
@@ -471,10 +657,26 @@ public class MotorRasgos {
         m.put("scorePerfil2", p2);
         m.put("scorePerfil3", p3);
         m.put("scorePerfil4", p4);
-        m.put("scorePerfil4", p5);
-        m.put("scorePerfil4", p6);
-        m.put("scorePerfil4", p7);
-        m.put("scorePerfil4", p8);
+        m.put("scorePerfil5", p5);
+        m.put("scorePerfil6", p6);
+        m.put("scorePerfil7", p7);
+        m.put("scorePerfil8", p8);
+        m.put("scorePerfil9", p9);
+        m.put("scorePerfil10", p10);
+        m.put("scorePerfil11", p11);
+        m.put("scorePerfil12", p12);
+        m.put("scorePerfil13", p13);
+        m.put("scorePerfil14", p14);
+        m.put("scorePerfil15", p15);
+        m.put("scorePerfil16", p16);
+        m.put("scorePerfil17", p17);
+        m.put("scorePerfil18", p18);
+        m.put("scorePerfil19", p19);
+        m.put("scorePerfil20", p20);
+        m.put("scorePerfil21", p21);
+        m.put("scorePerfil22", p22);
+        m.put("scorePerfil23", p23);
+        m.put("scorePerfil24", p24);
 
         // Agregar resumen del perfil elegido
         rasgos.add(0, new Rasgo("Clasificación experimental: " + nombres[idxMax]));
@@ -485,13 +687,20 @@ public class MotorRasgos {
 
         if(idxMax <= 3){
             region = "Región Costa (Litoral)";
-        }else{
+        }
+        else if(idxMax <= 13){
             region = "Región Sierra (Andes)\nKichwa de la Sierra";
+        }
+        else{
+            region = "Región Amazónica (Oriente)";
         }
 
         String perfilFinal =
                 region + "\nPueblo/Nacionalidad: " + nombres[idxMax];
 
+        if(confianza < 0.35f){
+            perfilFinal = "Perfil no claro\n" + perfilFinal;
+        }
         return new Resultado(perfilFinal, clamp01(confianza), rasgos, m);
     }
 
