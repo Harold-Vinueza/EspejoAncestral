@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, REQUEST_GALLERY);
     }
-
+    // **********************************
     // ================== CÁMARA ==================
     public void cambiarCamara(View view) {
 
