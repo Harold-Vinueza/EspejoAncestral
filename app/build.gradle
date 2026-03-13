@@ -34,6 +34,11 @@ android {
 }
 
 dependencies {
+    implementation libs.camera.core
+    implementation libs.camera.camera2
+    implementation libs.androidx.camera.lifecycle.v131
+    implementation libs.androidx.camera.view.v131
+
 
     //librería de ML Kit Face Detection
     implementation libs.face.detection
@@ -44,6 +49,8 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
     implementation libs.firebase.database
+    implementation libs.camera.view
+    implementation libs.camera.lifecycle
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

@@ -10,12 +10,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.CameraSelector;
 import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -50,6 +52,17 @@ public class MainActivity extends AppCompatActivity {
 
     Bitmap mSelectedImage;
     String rutaImagen = null;
+
+
+    private androidx.camera.view.PreviewView previewView;
+
+    private boolean usarCamaraFrontal = false;
+
+    private androidx.camera.core.ImageCapture imageCapture;
+
+    private ImageButton btCapturar;
+    private ImageButton btSwitchCamera;
+    private ImageButton btCerrarImagen;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,8 +73,22 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+
+
+
+
         txtresults = findViewById(R.id.txtresults);
         mImageView = findViewById(R.id.image_view);
+
+        previewView = findViewById(R.id.previewView);
+        iniciarCamara();
+
+        btCapturar = findViewById(R.id.btCapturar);
+        btSwitchCamera = findViewById(R.id.btSwitchCamera);
+        btCerrarImagen = findViewById(R.id.btCerrarImagen);
+        btCerrarImagen.setVisibility(View.GONE);
+
 
         if (checkSelfPermission(Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -79,28 +106,19 @@ public class MainActivity extends AppCompatActivity {
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, REQUEST_GALLERY);
     }
-    public void abrirCamara(View view) {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        //if (intent.resolveActivity(getPackageManager()) != null) {
-            File foto;
-            try {
-                foto = crearArchivoImagen();
-            } catch (IOException e) {
-                txtresults.setText("Error creando archivo");
-                return;
-            }
+    public void cambiarCamara(View view) {
 
-            Uri fotoURI = FileProvider.getUriForFile(
-                    this,
-                    getPackageName() + ".fileprovider",
-                    foto
-            );
+        usarCamaraFrontal = !usarCamaraFrontal;
 
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, fotoURI);
-            startActivityForResult(intent, REQUEST_CAMERA);
-        //}
+        iniciarCamara();
     }
+
+
+
+
+
+
     private File crearArchivoImagen() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File dir = getExternalFilesDir(null);
@@ -196,12 +214,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        btCapturar.setVisibility(View.GONE);
+        btSwitchCamera.setVisibility(View.GONE);
+        btCerrarImagen.setVisibility(View.VISIBLE);
         if (resultCode == RESULT_OK) {
             try {
                 if (requestCode == REQUEST_CAMERA) {
                     mSelectedImage = BitmapFactory.decodeFile(rutaImagen);
                     mImageView.setImageBitmap(mSelectedImage);
+
+                    mImageView.setVisibility(View.VISIBLE);
+                    previewView.setVisibility(View.GONE);
+
+
                     MediaScannerConnection.scanFile(this,
                             new String[]{rutaImagen}, null, null);
                 }
@@ -209,14 +234,19 @@ public class MainActivity extends AppCompatActivity {
                 if (requestCode == REQUEST_GALLERY && data != null) {
                     File temp = crearArchivoTempDesdeUri(data.getData());
                     rutaImagen = temp.getAbsolutePath();
+
+
+
                     mSelectedImage = BitmapFactory.decodeFile(rutaImagen);
                     mImageView.setImageBitmap(mSelectedImage);
+
+                    mImageView.setVisibility(View.VISIBLE);
+                    previewView.setVisibility(View.GONE);
                 }
             } catch (Exception e) {
                 txtresults.setText("Error al cargar imagen");
             }
         }
-
     }
 
     private File crearArchivoTempDesdeUri(Uri uri) throws IOException {
@@ -296,4 +326,121 @@ public class MainActivity extends AppCompatActivity {
 
         return android.util.Base64.encodeToString(imagenBytes, android.util.Base64.DEFAULT);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mSelectedImage == null) {
+
+            mImageView.setVisibility(View.GONE);
+            previewView.setVisibility(View.VISIBLE);
+
+            iniciarCamara();
+        }
+    }
+    public void cerrarImagen(View view) {
+
+        mImageView.setVisibility(View.GONE);
+        previewView.setVisibility(View.VISIBLE);
+
+        btCapturar.setVisibility(View.VISIBLE);
+        btSwitchCamera.setVisibility(View.VISIBLE);
+        btCerrarImagen.setVisibility(View.GONE);
+
+        mSelectedImage = null;
+
+    }
+
+
+    private void iniciarCamara() {
+
+        androidx.camera.lifecycle.ProcessCameraProvider.getInstance(this)
+                .addListener(() -> {
+                    try {
+
+                        androidx.camera.lifecycle.ProcessCameraProvider cameraProvider =
+                                androidx.camera.lifecycle.ProcessCameraProvider.getInstance(this).get();
+
+                        androidx.camera.core.Preview preview =
+                                new androidx.camera.core.Preview.Builder().build();
+
+                        imageCapture = new androidx.camera.core.ImageCapture.Builder().build();
+
+                        preview.setSurfaceProvider(previewView.getSurfaceProvider());
+
+                        CameraSelector cameraSelector;
+
+                        if (usarCamaraFrontal) {
+                            cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA;
+                        } else {
+                            cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+                        }
+
+                        cameraProvider.unbindAll();
+
+                        cameraProvider.bindToLifecycle(
+                                this,
+                                cameraSelector,
+                                preview,
+                                imageCapture
+                        );
+                    } catch (Exception e) {
+                        txtresults.setText("Error iniciando cámara");
+                        txtresults.setVisibility(View.VISIBLE);
+                    }
+
+                }, androidx.core.content.ContextCompat.getMainExecutor(this));
+    }
+
+    public void capturarFoto(View view) {
+
+        if (imageCapture == null) return;
+        btCapturar.setVisibility(View.GONE);
+        btSwitchCamera.setVisibility(View.GONE);
+        btCerrarImagen.setVisibility(View.VISIBLE);
+        try {
+
+            File foto = crearArchivoImagen();
+
+            androidx.camera.core.ImageCapture.OutputFileOptions options =
+                    new androidx.camera.core.ImageCapture.OutputFileOptions.Builder(foto).build();
+
+            imageCapture.takePicture(
+                    options,
+                    androidx.core.content.ContextCompat.getMainExecutor(this),
+                    new androidx.camera.core.ImageCapture.OnImageSavedCallback() {
+
+                        @Override
+                        public void onImageSaved(
+                                androidx.camera.core.ImageCapture.OutputFileResults outputFileResults) {
+
+                            mSelectedImage = BitmapFactory.decodeFile(rutaImagen);
+
+                            mImageView.setImageBitmap(mSelectedImage);
+                            mImageView.setVisibility(View.VISIBLE);
+                            previewView.setVisibility(View.GONE);
+
+                        }
+
+                        @Override
+                        public void onError(
+                                androidx.camera.core.ImageCaptureException exception) {
+
+                            txtresults.setText("Error al tomar foto");
+                            txtresults.setVisibility(View.VISIBLE);
+
+                        }
+                    });
+
+        } catch (Exception e) {
+            txtresults.setText("Error capturando foto");
+            txtresults.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+
+
+
 }
