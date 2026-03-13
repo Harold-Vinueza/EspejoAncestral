@@ -49,13 +49,9 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageView mImageView;
     private TextView txtresults;
-
+    private androidx.camera.view.PreviewView previewView;
     Bitmap mSelectedImage;
     String rutaImagen = null;
-
-
-    private androidx.camera.view.PreviewView previewView;
-
     private boolean usarCamaraFrontal = false;
 
     private androidx.camera.core.ImageCapture imageCapture;
@@ -63,24 +59,21 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton btCapturar;
     private ImageButton btSwitchCamera;
     private ImageButton btCerrarImagen;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-
-
-
-
         txtresults = findViewById(R.id.txtresults);
         mImageView = findViewById(R.id.image_view);
-
         previewView = findViewById(R.id.previewView);
         iniciarCamara();
 
@@ -88,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         btSwitchCamera = findViewById(R.id.btSwitchCamera);
         btCerrarImagen = findViewById(R.id.btCerrarImagen);
         btCerrarImagen.setVisibility(View.GONE);
-
 
         if (checkSelfPermission(Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -101,31 +93,62 @@ public class MainActivity extends AppCompatActivity {
         db.setValue("Android conectado correctamente");
     }
 
+    // ================== GALERÍA ==================
     public void abrirGaleria(View view) {
         Intent i = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, REQUEST_GALLERY);
     }
-
+    // **********************************
+    // ================== CÁMARA ==================
     public void cambiarCamara(View view) {
 
         usarCamaraFrontal = !usarCamaraFrontal;
 
         iniciarCamara();
     }
+    //}
+
+    // ================== RESULTADO FOTO ==================
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        btCapturar.setVisibility(View.GONE);
+        btSwitchCamera.setVisibility(View.GONE);
+        btCerrarImagen.setVisibility(View.VISIBLE);
+        if (resultCode == RESULT_OK) {
+            try {
+                if (requestCode == REQUEST_CAMERA) {
+                    mSelectedImage = BitmapFactory.decodeFile(rutaImagen);
+                    mImageView.setImageBitmap(mSelectedImage);
+
+                    mImageView.setVisibility(View.VISIBLE);
+                    previewView.setVisibility(View.GONE);
+
+
+                    MediaScannerConnection.scanFile(this,
+                            new String[]{rutaImagen}, null, null);
+                }
+
+                if (requestCode == REQUEST_GALLERY && data != null) {
+                    File temp = crearArchivoTempDesdeUri(data.getData());
+                    rutaImagen = temp.getAbsolutePath();
 
 
 
+                    mSelectedImage = BitmapFactory.decodeFile(rutaImagen);
+                    mImageView.setImageBitmap(mSelectedImage);
 
-
-
-    private File crearArchivoImagen() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File dir = getExternalFilesDir(null);
-        File image = File.createTempFile("IMG_" + timeStamp + "_", ".jpg", dir);
-        rutaImagen = image.getAbsolutePath();
-        return image;
+                    mImageView.setVisibility(View.VISIBLE);
+                    previewView.setVisibility(View.GONE);
+                }
+            } catch (Exception e) {
+                txtresults.setText("Error al cargar imagen");
+            }
+        }
     }
+
+    // ================== ANALIZAR ==================
     public void AnalizarRostro(View v) {
 
         txtresults.setVisibility(View.GONE);
@@ -193,6 +216,15 @@ public class MainActivity extends AppCompatActivity {
                             .append((int)(r.confianza * 100))
                             .append("%\n\n");
 
+
+                    sb.append("Otros perfiles posibles:\n");
+
+                    for(String p : r.top3Perfiles){
+                        sb.append(p).append("\n");
+                    }
+
+                    sb.append("\n");
+
                     for (MotorRasgos.Rasgo rg : r.rasgosUI) {
                         sb.append("- ").append(rg.nombre).append("\n");
                     }
@@ -211,42 +243,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        btCapturar.setVisibility(View.GONE);
-        btSwitchCamera.setVisibility(View.GONE);
-        btCerrarImagen.setVisibility(View.VISIBLE);
-        if (resultCode == RESULT_OK) {
-            try {
-                if (requestCode == REQUEST_CAMERA) {
-                    mSelectedImage = BitmapFactory.decodeFile(rutaImagen);
-                    mImageView.setImageBitmap(mSelectedImage);
-
-                    mImageView.setVisibility(View.VISIBLE);
-                    previewView.setVisibility(View.GONE);
-
-
-                    MediaScannerConnection.scanFile(this,
-                            new String[]{rutaImagen}, null, null);
-                }
-
-                if (requestCode == REQUEST_GALLERY && data != null) {
-                    File temp = crearArchivoTempDesdeUri(data.getData());
-                    rutaImagen = temp.getAbsolutePath();
 
 
 
-                    mSelectedImage = BitmapFactory.decodeFile(rutaImagen);
-                    mImageView.setImageBitmap(mSelectedImage);
 
-                    mImageView.setVisibility(View.VISIBLE);
-                    previewView.setVisibility(View.GONE);
-                }
-            } catch (Exception e) {
-                txtresults.setText("Error al cargar imagen");
-            }
-        }
+
+    // ================== UTILIDADES ==================
+    private File crearArchivoImagen() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File dir = getExternalFilesDir(null);
+        File image = File.createTempFile("IMG_" + timeStamp + "_", ".jpg", dir);
+        rutaImagen = image.getAbsolutePath();
+        return image;
     }
 
     private File crearArchivoTempDesdeUri(Uri uri) throws IOException {
@@ -264,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
         outputStream.close();
         return tempFile;
     }
+
 
     private void guardarPerfilEnFirebase(MotorRasgos.Resultado r, String imagenBase64) {
 
@@ -314,6 +323,9 @@ public class MainActivity extends AppCompatActivity {
             nuevo.setValue(data);
         });
     }
+
+
+
     private String bitmapABase64(Bitmap bitmap) {
         if (bitmap == null) return "";
 
@@ -327,30 +339,8 @@ public class MainActivity extends AppCompatActivity {
         return android.util.Base64.encodeToString(imagenBytes, android.util.Base64.DEFAULT);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
 
-        if (mSelectedImage == null) {
 
-            mImageView.setVisibility(View.GONE);
-            previewView.setVisibility(View.VISIBLE);
-
-            iniciarCamara();
-        }
-    }
-    public void cerrarImagen(View view) {
-
-        mImageView.setVisibility(View.GONE);
-        previewView.setVisibility(View.VISIBLE);
-
-        btCapturar.setVisibility(View.VISIBLE);
-        btSwitchCamera.setVisibility(View.VISIBLE);
-        btCerrarImagen.setVisibility(View.GONE);
-
-        mSelectedImage = null;
-
-    }
 
 
     private void iniciarCamara() {
@@ -439,8 +429,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        if (mSelectedImage == null) {
 
+            mImageView.setVisibility(View.GONE);
+            previewView.setVisibility(View.VISIBLE);
 
+            iniciarCamara();
+        }
+    }
+    public void cerrarImagen(View view) {
 
+        mImageView.setVisibility(View.GONE);
+        previewView.setVisibility(View.VISIBLE);
+
+        btCapturar.setVisibility(View.VISIBLE);
+        btSwitchCamera.setVisibility(View.VISIBLE);
+        btCerrarImagen.setVisibility(View.GONE);
+
+        mSelectedImage = null;
+
+    }
 }
