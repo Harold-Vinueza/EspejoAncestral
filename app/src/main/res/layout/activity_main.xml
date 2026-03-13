@@ -66,12 +66,63 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:id="@+id/image_view"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="Imagen seleccionada"
-            android:scaleType="centerCrop"/>
+            android:layout_height="match_parent">
+
+            <androidx.camera.view.PreviewView
+                android:id="@+id/previewView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="Imagen seleccionada"
+                android:scaleType="centerCrop"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="bottom"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="#55000000">
+
+                <ImageButton
+                    android:id="@+id/btCerrarImagen"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_close"
+                    android:onClick="cerrarImagen"/>
+
+                <ImageButton
+                    android:id="@+id/btCapturar"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/capturar"
+                    android:onClick="capturarFoto"/>
+
+                <ImageButton
+                    android:id="@+id/btSwitchCamera"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/cambiar_camera"
+                    android:onClick="cambiarCamara"/>
+
+            </LinearLayout>
+
+
+        </FrameLayout>
 
     </androidx.cardview.widget.CardView>
 
@@ -102,8 +153,6 @@
 
     </androidx.cardview.widget.CardView>
 
-
-    <!-- Botones Cámara y Galería -->
     <LinearLayout
         android:id="@+id/layoutBottomButtons"
         android:layout_width="0dp"
@@ -111,20 +160,9 @@
         android:layout_margin="16dp"
         android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@id/btFace"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btCamera"
-            android:layout_width="0dp"
-            android:layout_height="52dp"
-            android:layout_weight="1"
-            android:onClick="abrirCamara"
-            android:text="Cámara"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="#1A237E"
-            app:icon="@drawable/camera"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btGallery"
@@ -139,23 +177,19 @@
             app:strokeWidth="1dp"
             app:icon="@drawable/galeria"/>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btFace"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:onClick="AnalizarRostro"
+            android:text="Analizar Rostro"
+            android:textColor="#FFFFFF"
+            app:backgroundTint="#283593"
+            app:cornerRadius="14dp"
+            app:icon="@drawable/persona"/>
+
     </LinearLayout>
-
-
-    <!-- Botón Analizar -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btFace"
-        android:layout_width="0dp"
-        android:layout_height="52dp"
-        android:layout_margin="16dp"
-        android:onClick="AnalizarRostro"
-        android:text="Analizar Rostro"
-        android:textColor="#FFFFFF"
-        app:backgroundTint="#283593"
-        app:cornerRadius="14dp"
-        app:icon="@drawable/persona"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
