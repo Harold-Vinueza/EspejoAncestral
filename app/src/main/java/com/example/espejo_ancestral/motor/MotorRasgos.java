@@ -3,19 +3,15 @@ package com.example.espejo_ancestral.motor;
 import android.graphics.PointF;
 import android.graphics.Rect;
 
+import com.google.mlkit.vision.face.Face;
+import com.google.mlkit.vision.face.FaceContour;
+import com.google.mlkit.vision.face.FaceLandmark;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-
-import com.google.mlkit.vision.face.Face;
-import com.google.mlkit.vision.face.FaceContour;
-import com.google.mlkit.vision.face.FaceLandmark;
-
-
-
 
 public class MotorRasgos {
 
@@ -35,7 +31,7 @@ public class MotorRasgos {
         public float confianza;
         public List<Rasgo> rasgosUI;
         public Map<String, Float> metricas;
-
+        public List<String> top3Perfiles;
         public Resultado(String perfil, float confianza,
                          List<Rasgo> rasgosUI,
                          Map<String, Float> metricas) {
@@ -387,7 +383,6 @@ public class MotorRasgos {
         float p22 = 0f, w22 = 0f;
         float p23 = 0f, w23 = 0f;
         float p24 = 0f, w24 = 0f;
-
         // PERFIL 1
         p1 += scoreHigh(faceRatio, 1.20f, 1.55f) * 1.2f; w1 += 1.2f;
         p1 += scoreLow(noseWidth, 0.11f, 0.17f) * 1.1f; w1 += 1.1f;
@@ -563,6 +558,7 @@ public class MotorRasgos {
         p13 /= w13; p14 /= w14; p15 /= w15; p16 /= w16;
         p17 /= w17; p18 /= w18; p19 /= w19; p20 /= w20;
         p21 /= w21; p22 /= w22; p23 /= w23; p24 /= w24;
+
         // empate / robustez con simetría y puntos
         float detalle = normalize(totalContourPoints, 40f, 130f);
         p1 += detalle * 0.05f;
@@ -591,9 +587,12 @@ public class MotorRasgos {
         p24 += detalle * 0.05f;
 
 
+
+
         // -------------------------
         // 9) DECISIÓN FINAL
         // -------------------------
+
         float[] scores = {
                 p1,p2,p3,p4,
                 p5,p6,p7,p8,
@@ -601,8 +600,15 @@ public class MotorRasgos {
                 p15,p16,p17,p18,p19,p20,p21,p22,p23,p24
         };
 
+//        StringBuilder debug = new StringBuilder();
+//        for (int i = 0; i < scores.length; i++) {
+//            debug.append("Perfil ").append(i + 1)
+//                    .append(": ")
+//                    .append(String.format(java.util.Locale.US, "%.3f", scores[i]))
+//                    .append("\n");
+//        }
         for(int i = 0; i < scores.length; i++){
-            scores[i] += Math.random() * 0.6;
+            scores[i] += Math.random() * 0.02;
         }
 
         String[] nombres = {
@@ -631,6 +637,12 @@ public class MotorRasgos {
                 "Zápara",
                 "Kichwa Amazónico"
         };
+        //añadir
+        for(int i = 0; i < scores.length; i++){
+            if(scores[i] < 0){
+                scores[i] = 0;
+            }
+        }
 
 
         int idxMax = 0;
@@ -645,11 +657,37 @@ public class MotorRasgos {
             }
         }
 
+        List<Integer> indices = new ArrayList<>();
+        for(int i=0;i<scores.length;i++){
+            indices.add(i);
+        }
+        indices.sort((a,b) -> Float.compare(scores[b], scores[a]));
+
+
+        List<String> top3 = new ArrayList<>();
+        for(int i=0;i<3;i++){
+            int idx = indices.get(i);
+
+            String texto = (i+1) + ". " + nombres[idx] +
+                    " - " + String.format(Locale.US, "%.2f%%", scores[idx] * 100f);
+
+            top3.add(texto);
+        }
+
+
+        float segundo = 0f;
+        for(int i = 0; i < scores.length; i++){
+            if(i != idxMax && scores[i] > segundo){
+                segundo = scores[i];
+            }
+        }
+
+
         float confianza;
         if (suma <= 0.0001f) {
             confianza = 0.25f;
         } else {
-            confianza = (max - (suma / scores.length)) / max;
+            confianza = max;
         }
 
         // Guardar puntajes también
@@ -678,6 +716,12 @@ public class MotorRasgos {
         m.put("scorePerfil23", p23);
         m.put("scorePerfil24", p24);
 
+
+
+
+
+
+
         // Agregar resumen del perfil elegido
         rasgos.add(0, new Rasgo("Clasificación experimental: " + nombres[idxMax]));
         rasgos.add(1, new Rasgo(String.format(Locale.US,
@@ -701,7 +745,9 @@ public class MotorRasgos {
         if(confianza < 0.35f){
             perfilFinal = "Perfil no claro\n" + perfilFinal;
         }
-        return new Resultado(perfilFinal, clamp01(confianza), rasgos, m);
+        Resultado r = new Resultado(perfilFinal, clamp01(confianza), rasgos, m);
+        r.top3Perfiles = top3;
+        return r;
     }
 
     // =========================
@@ -857,5 +903,4 @@ public class MotorRasgos {
             return (high - value) / (high - ideal);
         }
     }
-
 }
