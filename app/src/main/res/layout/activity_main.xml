@@ -68,10 +68,14 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:clipChildren= "false"
+            android:clipToPadding="false">
 
             <androidx.camera.view.PreviewView
                 android:id="@+id/previewView"
+                app:scaleType="fillCenter"
+                android:background="@android:color/transparent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
@@ -181,7 +185,7 @@
             android:id="@+id/btFace"
             android:layout_width="0dp"
             android:layout_height="52dp"
-            android:layout_weight="1"
+            android:layout_weight="1.5"
             android:layout_marginStart="10dp"
             android:onClick="AnalizarRostro"
             android:text="Analizar Rostro"

@@ -17,7 +17,9 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.AspectRatio;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageCapture;
 import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -41,6 +43,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import androidx.exifinterface.media.ExifInterface;
+import android.graphics.Matrix;
+
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.ImageCapture.OutputFileOptions;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.Preview;
+import androidx.camera.core.ImageCapture;
+import androidx.core.content.ContextCompat;
+
+import androidx.camera.core.AspectRatio;
+import androidx.camera.view.PreviewView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton btCapturar;
     private ImageButton btSwitchCamera;
     private ImageButton btCerrarImagen;
+//    private ImageCapture imageCapture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         txtresults = findViewById(R.id.txtresults);
         mImageView = findViewById(R.id.image_view);
         previewView = findViewById(R.id.previewView);
+        previewView.setScaleType(androidx.camera.view.PreviewView.ScaleType.FILL_CENTER);
         iniciarCamara();
 
         btCapturar = findViewById(R.id.btCapturar);
@@ -95,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
 
     // ================== GALERÍA ==================
     public void abrirGaleria(View view) {
+
+        txtresults.setVisibility(View.GONE);
         Intent i = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, REQUEST_GALLERY);
@@ -102,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
     // **********************************
     // ================== CÁMARA ==================
     public void cambiarCamara(View view) {
-
+        txtresults.setVisibility(View.GONE);
         usarCamaraFrontal = !usarCamaraFrontal;
 
         iniciarCamara();
@@ -113,35 +133,70 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        btCapturar.setVisibility(View.GONE);
-        btSwitchCamera.setVisibility(View.GONE);
-        btCerrarImagen.setVisibility(View.VISIBLE);
+
+
+
         if (resultCode == RESULT_OK) {
             try {
+
                 if (requestCode == REQUEST_CAMERA) {
-                    mSelectedImage = BitmapFactory.decodeFile(rutaImagen);
+                    txtresults.setVisibility(View.GONE);
+                    btCapturar.setVisibility(View.GONE);
+                    btSwitchCamera.setVisibility(View.GONE);
+                    btCerrarImagen.setVisibility(View.VISIBLE);
+                    Bitmap bitmap = BitmapFactory.decodeFile(rutaImagen);
+                    bitmap = corregirRotacion(rutaImagen, bitmap);
+
+                    // seguridad extra para teléfonos que no guardan EXIF (Samsung)
+                    if (bitmap.getWidth() > bitmap.getHeight()) {
+                        Matrix matrix = new Matrix();
+                        matrix.postRotate(90);
+                        bitmap = Bitmap.createBitmap(
+                                bitmap,
+                                0,
+                                0,
+                                bitmap.getWidth(),
+                                bitmap.getHeight(),
+                                matrix,
+                                true
+                        );
+                    }
+
+                    mSelectedImage = bitmap;
                     mImageView.setImageBitmap(mSelectedImage);
 
                     mImageView.setVisibility(View.VISIBLE);
                     previewView.setVisibility(View.GONE);
 
-
-                    MediaScannerConnection.scanFile(this,
-                            new String[]{rutaImagen}, null, null);
+                    MediaScannerConnection.scanFile(
+                            this,
+                            new String[]{rutaImagen},
+                            null,
+                            null
+                    );
                 }
 
                 if (requestCode == REQUEST_GALLERY && data != null) {
+
+                    btCapturar.setVisibility(View.GONE);
+                    btSwitchCamera.setVisibility(View.GONE);
+                    btCerrarImagen.setVisibility(View.VISIBLE);
+
                     File temp = crearArchivoTempDesdeUri(data.getData());
                     rutaImagen = temp.getAbsolutePath();
 
+                    Bitmap bitmap = BitmapFactory.decodeFile(rutaImagen);
+
+                    mSelectedImage=corregirRotacion(rutaImagen, bitmap);
 
 
-                    mSelectedImage = BitmapFactory.decodeFile(rutaImagen);
+                    //mSelectedImage = bitmap;
                     mImageView.setImageBitmap(mSelectedImage);
 
                     mImageView.setVisibility(View.VISIBLE);
                     previewView.setVisibility(View.GONE);
                 }
+
             } catch (Exception e) {
                 txtresults.setText("Error al cargar imagen");
             }
@@ -352,10 +407,26 @@ public class MainActivity extends AppCompatActivity {
                         androidx.camera.lifecycle.ProcessCameraProvider cameraProvider =
                                 androidx.camera.lifecycle.ProcessCameraProvider.getInstance(this).get();
 
-                        androidx.camera.core.Preview preview =
-                                new androidx.camera.core.Preview.Builder().build();
 
-                        imageCapture = new androidx.camera.core.ImageCapture.Builder().build();
+
+                        android.util.DisplayMetrics metrics = new android.util.DisplayMetrics();
+                        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+                        android.util.Size screenSize =
+                                new android.util.Size(metrics.widthPixels, metrics.heightPixels);
+
+                        androidx.camera.core.Preview preview =
+                                new androidx.camera.core.Preview.Builder()
+                                        .setTargetResolution(screenSize)
+                                        .build();
+
+
+
+                        imageCapture = new androidx.camera.core.ImageCapture.Builder()
+
+                                .setTargetAspectRatio(androidx.camera.core.AspectRatio.RATIO_16_9)
+                                .setTargetRotation(previewView.getDisplay().getRotation())
+                                .build();
 
                         preview.setSurfaceProvider(previewView.getSurfaceProvider());
 
@@ -375,6 +446,7 @@ public class MainActivity extends AppCompatActivity {
                                 preview,
                                 imageCapture
                         );
+
                     } catch (Exception e) {
                         txtresults.setText("Error iniciando cámara");
                         txtresults.setVisibility(View.VISIBLE);
@@ -383,15 +455,19 @@ public class MainActivity extends AppCompatActivity {
                 }, androidx.core.content.ContextCompat.getMainExecutor(this));
     }
 
+
     public void capturarFoto(View view) {
 
         if (imageCapture == null) return;
+
         btCapturar.setVisibility(View.GONE);
         btSwitchCamera.setVisibility(View.GONE);
         btCerrarImagen.setVisibility(View.VISIBLE);
+        txtresults.setVisibility(View.GONE);
         try {
 
             File foto = crearArchivoImagen();
+            rutaImagen = foto.getAbsolutePath();
 
             androidx.camera.core.ImageCapture.OutputFileOptions options =
                     new androidx.camera.core.ImageCapture.OutputFileOptions.Builder(foto).build();
@@ -405,12 +481,18 @@ public class MainActivity extends AppCompatActivity {
                         public void onImageSaved(
                                 androidx.camera.core.ImageCapture.OutputFileResults outputFileResults) {
 
-                            mSelectedImage = BitmapFactory.decodeFile(rutaImagen);
+                            Bitmap bitmap = BitmapFactory.decodeFile(rutaImagen);
+
+
+
+                           mSelectedImage= corregirRotacion(rutaImagen, bitmap);
+
+
+//
 
                             mImageView.setImageBitmap(mSelectedImage);
                             mImageView.setVisibility(View.VISIBLE);
                             previewView.setVisibility(View.GONE);
-
                         }
 
                         @Override
@@ -429,6 +511,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -443,6 +530,8 @@ public class MainActivity extends AppCompatActivity {
     }
     public void cerrarImagen(View view) {
 
+        txtresults.setVisibility(View.GONE);
+
         mImageView.setVisibility(View.GONE);
         previewView.setVisibility(View.VISIBLE);
 
@@ -452,5 +541,41 @@ public class MainActivity extends AppCompatActivity {
 
         mSelectedImage = null;
 
+    }
+    private Bitmap corregirRotacion(String path, Bitmap bitmap) {
+        try {
+
+            androidx.exifinterface.media.ExifInterface exif =
+                    new androidx.exifinterface.media.ExifInterface(path);
+
+            int orientacion = exif.getAttributeInt(
+                    androidx.exifinterface.media.ExifInterface.TAG_ORIENTATION,
+                    androidx.exifinterface.media.ExifInterface.ORIENTATION_NORMAL);
+
+            Matrix matrix = new Matrix();
+
+            if (orientacion == androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_90) {
+                matrix.postRotate(90);
+            } else if (orientacion == androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_180) {
+                matrix.postRotate(180);
+            } else if (orientacion == androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_270) {
+                matrix.postRotate(270);
+            } else {
+                return bitmap; // 👈 si no necesita rotación, se devuelve igual
+            }
+
+            return Bitmap.createBitmap(
+                    bitmap,
+                    0,
+                    0,
+                    bitmap.getWidth(),
+                    bitmap.getHeight(),
+                    matrix,
+                    true
+            );
+
+        } catch (Exception e) {
+            return bitmap;
+        }
     }
 }
