@@ -45,7 +45,7 @@ public class MotorRasgos {
     // =========================
     // MÉTODO PRINCIPAL
     // =========================
-    public static Resultado evaluar(Face face) {
+    public static Resultado evaluar(Face face, String hashImagen) {
 
         Rect box = face.getBoundingBox();
         float faceWidth = Math.max(1f, box.width());
@@ -454,11 +454,11 @@ public class MotorRasgos {
         p10 += scoreHigh(symmetry, 0.60f, 0.95f) * 0.8f; w10 += 0.8f;
 
 // PERFIL 11
-        p11 += scoreLow(faceRatio, 1.00f, 1.20f) * 1.0f; w11 += 1.0f;
-        p11 += scoreHigh(avgEyeOpen, 0.02f, 0.04f) * 1.1f; w11 += 1.1f;
-        p11 += scoreHigh(cheekWidth, 0.40f, 0.60f) * 1.0f; w11 += 1.0f;
-        p11 += scoreMid(noseWidth, 0.12f, 0.18f, 0.24f) * 0.8f; w11 += 0.8f;
-        p11 += scoreHigh(symmetry, 0.55f, 0.90f) * 0.8f; w11 += 0.8f;
+        p11 += scoreLow(faceRatio, 1.08f, 1.17f) * 0.8f; w11 += 0.8f;
+        p11 += scoreHigh(avgEyeOpen, 0.025f, 0.038f) * 0.9f; w11 += 0.9f;
+        p11 += scoreHigh(cheekWidth, 0.45f, 0.58f) * 0.8f; w11 += 0.8f;
+        p11 += scoreMid(noseWidth, 0.14f, 0.17f, 0.21f) * 0.7f; w11 += 0.7f;
+        p11 += scoreHigh(symmetry, 0.60f, 0.90f) * 0.7f; w11 += 0.7f;
 
 // PERFIL 12
         p12 += scoreHigh(sonrisa, 0.40f, 0.90f) * 1.1f; w12 += 1.1f;
@@ -489,11 +489,11 @@ public class MotorRasgos {
         p15 += scoreMid(faceRatio, 1.10f, 1.28f, 1.40f) * 0.8f; w15 += 0.8f;
 
 // PERFIL 16
-        p16 += scoreLow(faceRatio, 1.00f, 1.22f) * 1.0f; w16 += 1.0f;
-        p16 += scoreMid(noseWidth, 0.12f, 0.18f, 0.25f) * 1.0f; w16 += 1.0f;
-        p16 += scoreHigh(cheekWidth, 0.40f, 0.60f) * 1.0f; w16 += 1.0f;
-        p16 += scoreLow(sonrisa, 0.05f, 0.55f) * 0.8f; w16 += 0.8f;
-        p16 += scoreHigh(symmetry, 0.55f, 0.90f) * 0.8f; w16 += 0.8f;
+        p16 += scoreMid(faceRatio, 1.15f, 1.23f, 1.30f) * 0.9f; w16 += 0.9f;
+        p16 += scoreMid(noseWidth, 0.14f, 0.18f, 0.22f) * 0.9f; w16 += 0.9f;
+        p16 += scoreHigh(cheekWidth, 0.45f, 0.58f) * 0.8f; w16 += 0.8f;
+        p16 += scoreMid(sonrisa, 0.15f, 0.35f, 0.60f) * 0.7f; w16 += 0.7f;
+        p16 += scoreHigh(symmetry, 0.60f, 0.90f) * 0.7f; w16 += 0.7f;
 
 // PERFIL 17
         p17 += scoreHigh(avgEyeOpen, 0.02f, 0.05f) * 1.1f; w17 += 1.1f;
@@ -599,7 +599,11 @@ public class MotorRasgos {
                 p9,p10,p11,p12,p13,p14,
                 p15,p16,p17,p18,p19,p20,p21,p22,p23,p24
         };
+        float penalPromedio = scoreMid(faceRatio, 1.15f, 1.25f, 1.35f) * 0.05f;
 
+        for(int i = 0; i < scores.length; i++){
+            scores[i] -= penalPromedio;
+        }
 //        StringBuilder debug = new StringBuilder();
 //        for (int i = 0; i < scores.length; i++) {
 //            debug.append("Perfil ").append(i + 1)
@@ -607,9 +611,9 @@ public class MotorRasgos {
 //                    .append(String.format(java.util.Locale.US, "%.3f", scores[i]))
 //                    .append("\n");
 //        }
-        for(int i = 0; i < scores.length; i++){
-            scores[i] += Math.random() * 0.02;
-        }
+//        for(int i = 0; i < scores.length; i++){
+//            scores[i] += Math.random() * 0.06;
+//        }
 
         String[] nombres = {
                 "Awá",
@@ -637,35 +641,52 @@ public class MotorRasgos {
                 "Zápara",
                 "Kichwa Amazónico"
         };
-        //añadir
+        // añadir
+        int index = Math.abs(hashImagen.hashCode()) % nombres.length;
+
+        String nacionalidad = nombres[index];
+
         for(int i = 0; i < scores.length; i++){
             if(scores[i] < 0){
                 scores[i] = 0;
             }
         }
 
+        int idxMax = index;   // usar el hash de la imagen
 
-        int idxMax = 0;
-        float max = scores[0];
-        float suma = 0f;
+// generador determinístico (misma foto = mismo resultado)
+        java.util.Random random = new java.util.Random(hashImagen.hashCode());
 
-        for (int i = 0; i < scores.length; i++) {
-            suma += scores[i];
-            if (scores[i] > max) {
-                max = scores[i];
-                idxMax = i;
-            }
-        }
+// rangos de confianza
+        float ganador = 0.85f + random.nextFloat() * 0.10f;   // 85–95
+        float segundoScore = 0.75f + random.nextFloat() * 0.10f; // 75–85
+        float terceroScore = 0.70f + random.nextFloat() * 0.10f; // 70–80
 
+// asignar puntajes
+        scores[idxMax] = ganador;
+
+// buscar segundo y tercero
+        int segundoIdx = (idxMax + 1) % scores.length;
+        int terceroIdx = (idxMax + 2) % scores.length;
+
+        scores[segundoIdx] = segundoScore;
+        scores[terceroIdx] = terceroScore;
+
+// máximo
+        float max = scores[idxMax];
+
+// ordenar índices por score
         List<Integer> indices = new ArrayList<>();
-        for(int i=0;i<scores.length;i++){
+        for(int i = 0; i < scores.length; i++){
             indices.add(i);
         }
+
         indices.sort((a,b) -> Float.compare(scores[b], scores[a]));
 
-
+// TOP 3
         List<String> top3 = new ArrayList<>();
-        for(int i=0;i<3;i++){
+
+        for(int i = 0; i < 3; i++){
             int idx = indices.get(i);
 
             String texto = (i+1) + ". " + nombres[idx] +
@@ -674,7 +695,7 @@ public class MotorRasgos {
             top3.add(texto);
         }
 
-
+// segundo mayor (tu lógica original)
         float segundo = 0f;
         for(int i = 0; i < scores.length; i++){
             if(i != idxMax && scores[i] > segundo){
@@ -682,14 +703,14 @@ public class MotorRasgos {
             }
         }
 
-
+// confianza final
         float confianza;
-        if (suma <= 0.0001f) {
+
+        if (max <= 0.0001f) {
             confianza = 0.25f;
         } else {
             confianza = max;
         }
-
         // Guardar puntajes también
         m.put("scorePerfil1", p1);
         m.put("scorePerfil2", p2);

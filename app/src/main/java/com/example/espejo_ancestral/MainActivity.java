@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton btSwitchCamera;
     private ImageButton btCerrarImagen;
 //    private ImageCapture imageCapture;
-
+private static final Map<String, MotorRasgos.Resultado> historial = new HashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -258,9 +258,22 @@ public class MainActivity extends AppCompatActivity {
                         txtresults.setVisibility(View.VISIBLE);
                         return;
                     }
-                    MotorRasgos.Resultado r =
-                            MotorRasgos.evaluar(face);
+                    String hashImagen = generarHash(mSelectedImage);
 
+                    MotorRasgos.Resultado r;
+
+                    if(historial.containsKey(hashImagen)){
+
+                        // misma foto → usar resultado guardado
+                        r = historial.get(hashImagen);
+
+                    }else{
+
+                        // foto nueva → calcular resultado
+                        r = MotorRasgos.evaluar(face, hashImagen);
+
+                        historial.put(hashImagen,r);
+                    }
 
                     String imagenBase64 = bitmapABase64(mSelectedImage);
                     guardarPerfilEnFirebase(r, imagenBase64);
@@ -387,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
         java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
 
         // Puedes cambiar 70 por 60 o 50 si quieres que pese menos
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 60, baos);
 
         byte[] imagenBytes = baos.toByteArray();
 
@@ -577,5 +590,34 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             return bitmap;
         }
+    }
+    private String generarHash(Bitmap bitmap){
+
+        try{
+
+            java.io.ByteArrayOutputStream stream =
+                    new java.io.ByteArrayOutputStream();
+
+            bitmap.compress(Bitmap.CompressFormat.JPEG,80,stream);
+
+            byte[] bytes = stream.toByteArray();
+
+            java.security.MessageDigest digest =
+                    java.security.MessageDigest.getInstance("MD5");
+
+            byte[] hash = digest.digest(bytes);
+
+            StringBuilder hex = new StringBuilder();
+
+            for(byte b : hash){
+                hex.append(String.format("%02x",b));
+            }
+
+            return hex.toString();
+
+        }catch(Exception e){
+            return "error";
+        }
+
     }
 }
